@@ -30,4 +30,12 @@ class CreateTodosTable extends Migration
     {
         Schema::dropIfExists('todos');
     }
+
+    public function index()
+{
+    $todos = Todo::orderBy('created_at','desc')->paginate(8);
+    return view('todos.index',[
+        'todos' => $todos,
+    ]);
+}
 }
