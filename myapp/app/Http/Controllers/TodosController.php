@@ -61,6 +61,25 @@ class TodosController extends Controller
 
     public function update(Request $request, $id)
     {
+        $rules = [
+            'title' => "required|string|unique:todos,title,{$id}|min:2|max:191", //Using double quotes
+            'body'  => 'required|string|min:5|max:1000',
+        ];
+        //custom validation error messages
+        $messages = [
+            'title.unique' => 'Todo title should be unique',
+        ];
+        //First Validate the form data
+        $request->validate($rules,$messages);
+        //Update the Todo
+        $todo        = Todo::findOrFail($id);
+        $todo->title = $request->title;
+        $todo->body  = $request->body;
+        $todo->save(); //Can be used for both creating and updating
+        //Redirect to a specified route with flash message.
+        return redirect()
+            ->route('todos.show',$id)
+            ->with('status','Updated the selected Todo!');
     }
 
     public function destroy($id)
